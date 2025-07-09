@@ -112,11 +112,6 @@ The application implements infinite scrolling by:
 - Xcode (for iOS development)
 - Physical device or emulator for testing
 
-## Submission
-
-- **Code Repository**: [GitHub Repository Link]
-- **Screencast**: [Link to Screencast]
-
 ## Notes
 
 - The application is built using Expo and React Native
