@@ -36,6 +36,7 @@ export default function ChatInput({ onSendMessage }) {
           value={message}
           onChangeText={setMessage}
           placeholder="Type a message..."
+          placeholderTextColor={Colors.lightText}
           multiline
           maxLength={500}
           onFocus={handleInputPress}
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     maxHeight: 100,
     fontSize: 16,
+    color: Colors.text,
   },
   attachButton: {
     padding: 8,

@@ -47,10 +47,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.receiverBubble,
   },
   senderText: {
-    color: Colors.text,
+    color: Colors.senderText,
   },
   receiverText: {
-    color: Colors.text,
+    color: Colors.receiverText,
   },
   timestamp: {
     fontSize: 10,
