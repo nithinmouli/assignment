@@ -1,66 +1,84 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { Colors } from '../../constants';
-
 export default function MessageBubble({ message, isSender }) {
-  const bubbleStyle = isSender ? styles.senderBubble : styles.receiverBubble;
-  const textStyle = isSender ? styles.senderText : styles.receiverText;
-
+  const messageText = message.message || message.text || "";
   return (
-    <View style={[styles.container, isSender ? styles.senderContainer : styles.receiverContainer]}>
+    <View style={[
+      styles.container,
+      isSender ? styles.senderContainer : styles.receiverContainer
+    ]}>
       {!isSender && (
         <Image 
-          source={{ uri: message.sender.image || 'https://via.placeholder.com/40' }} 
+          source={{ uri: message.sender?.image  }} 
           style={styles.avatar}
         />
       )}
-      <View style={[styles.bubble, bubbleStyle]}>
-        <Text style={textStyle}>{message.message}</Text>
-        <Text style={styles.timestamp}>{new Date(message.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+      <View style={[
+        styles.bubble,
+        isSender ? styles.senderBubble : styles.receiverBubble
+      ]}>
+        <Text style={[
+          styles.messageText,
+          isSender ? styles.senderText : styles.receiverText
+        ]}>
+          {messageText.replace(/<br>Page 0<br>/g, '')}
+        </Text>
       </View>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 5,
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    maxWidth: '80%',
-  },
-  senderContainer: {
-    alignSelf: 'flex-end',
+    marginBottom: 10,
+    paddingHorizontal: 4,
   },
   receiverContainer: {
     alignSelf: 'flex-start',
+    maxWidth: '85%',
   },
-  bubble: {
-    borderRadius: 18,
-    padding: 12,
-    marginHorizontal: 8,
-  },
-  senderBubble: {
-    backgroundColor: Colors.senderBubble,
-  },
-  receiverBubble: {
-    backgroundColor: Colors.receiverBubble,
-  },
-  senderText: {
-    color: Colors.text,
-  },
-  receiverText: {
-    color: Colors.text,
-  },
-  timestamp: {
-    fontSize: 10,
-    color: Colors.lightText,
+  senderContainer: {
     alignSelf: 'flex-end',
-    marginTop: 2,
+    maxWidth: '85%',
   },
   avatar: {
     width: 30,
     height: 30,
     borderRadius: 15,
+    marginRight: 8,
+    alignSelf: 'flex-end',
+  },
+  bubble: {
+    padding: 12,
+    paddingHorizontal: 16,
+    borderRadius: 18,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  receiverBubble: {
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 4,
+  },
+  senderBubble: {
+    backgroundColor: '#0066FF',
+    borderBottomRightRadius: 4,
+  },
+  messageText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'System',
+    letterSpacing: 0.1,
+  },
+  receiverText: {
+    color: '#333333',
+  },
+  senderText: {
+    color: 'white',
   },
 });

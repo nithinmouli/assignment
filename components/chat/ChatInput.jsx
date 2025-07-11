@@ -1,14 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants';
+import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useRef, useState } from 'react';
+import { Animated, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 export default function ChatInput({ onSendMessage }) {
   const [message, setMessage] = useState('');
+  const [showMedia, setShowMedia] = useState(false);
   const insets = useSafeAreaInsets();
   const textInputRef = useRef(null);
-
+  const mediaAnimation = useRef(new Animated.Value(0)).current;
   const handleSend = () => {
     if (message.trim()) {
       onSendMessage(message);
@@ -16,57 +15,91 @@ export default function ChatInput({ onSendMessage }) {
       textInputRef.current?.focus();
     }
   };
-
+  const toggleMediaButtons = () => {
+    const newShowMedia = !showMedia;
+    setShowMedia(newShowMedia);
+    Animated.timing(mediaAnimation, {
+      toValue: newShowMedia ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
   const handleInputPress = () => {
     textInputRef.current?.focus();
+    if (showMedia) {
+      toggleMediaButtons();
+    }
   };
-
   return (
     <View style={[
       styles.container, 
       { paddingBottom: Math.max(10, insets.bottom) }
     ]}>
-      <View style={styles.inputContainer}>
-        <TouchableOpacity style={styles.attachButton}>
-          <Ionicons name="attach" size={24} color={Colors.lightText} />
+      <View style={styles.inputRow}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            ref={textInputRef}
+            style={styles.input}
+            value={message}
+            onChangeText={setMessage}
+            placeholder="Reply "
+            multiline
+            maxLength={500}
+            onFocus={handleInputPress}
+            blurOnSubmit={false}
+            placeholderTextColor="#999999"
+          />
+        </View>
+        <TouchableOpacity style={styles.iconButton} onPress={toggleMediaButtons}>
+          <Feather name="paperclip" size={22} color="#999999" />
         </TouchableOpacity>
-        <TextInput
-          ref={textInputRef}
-          style={styles.input}
-          value={message}
-          onChangeText={setMessage}
-          placeholder="Type a message..."
-          multiline
-          maxLength={500}
-          onFocus={handleInputPress}
-          returnKeyType="send"
-          onSubmitEditing={handleSend}
-          blurOnSubmit={false}
-        />
-        <TouchableOpacity style={styles.emojiButton}>
-          <Ionicons name="happy-outline" size={24} color={Colors.lightText} />
+        <TouchableOpacity 
+          style={styles.iconButton}
+          onPress={handleSend}
+          disabled={!message.trim()}
+        >
+          <Feather name="send" size={22} color={message.trim() ? "#25D366" : "#999999"} />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity 
-        style={styles.sendButton} 
-        onPress={handleSend}
-        disabled={!message.trim()}
-      >
-        <Ionicons name="send" size={20} color={Colors.background} />
-      </TouchableOpacity>
+      {showMedia && (
+        <Animated.View 
+          style={[
+            styles.mediaButtonsContainer,
+            {
+              opacity: mediaAnimation,
+              transform: [{ 
+                translateY: mediaAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [20, 0]
+                })
+              }]
+            }
+          ]}
+        >
+          <View style={styles.mediaButtonsWrapper}>
+            <TouchableOpacity style={styles.mediaButton}>
+              <Ionicons name="camera" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.mediaButton}>
+              <Ionicons name="videocam" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.mediaButton}>
+              <MaterialIcons name="description" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     padding: 10,
-    paddingTop: 10,
-    backgroundColor: Colors.background,
-    alignItems: 'center',
+    paddingTop: 5,
+    backgroundColor: 'white',
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderTopColor: '#F0F0F0',
+    position: 'relative',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -79,34 +112,47 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   inputContainer: {
     flex: 1,
-    flexDirection: 'row',
-    backgroundColor: Colors.lightGray,
+    backgroundColor: '#F6F6F6',
     borderRadius: 20,
-    paddingHorizontal: 10,
-    alignItems: 'center',
+    paddingHorizontal: 15,
+    marginRight: 8,
   },
   input: {
-    flex: 1,
     paddingVertical: 8,
-    paddingHorizontal: 5,
     maxHeight: 100,
     fontSize: 16,
+    color: 'black',
   },
-  attachButton: {
+  iconButton: {
     padding: 8,
+    marginLeft: 2,
   },
-  emojiButton: {
-    padding: 8,
+  mediaButtonsContainer: {
+    position: 'absolute',
+    right: 10,
+    bottom: 90,
+    zIndex: 10,
+    backgroundColor: 'transparent',
   },
-  sendButton: {
-    marginLeft: 10,
-    backgroundColor: Colors.primary,
-    width: 40,
-    height: 40,
+  mediaButtonsWrapper: {
+    flexDirection: 'row',
+    backgroundColor: '#008000',
     borderRadius: 20,
+    padding: 3,
+    justifyContent: 'space-between',
+  },
+  mediaButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 2,
   },
 });

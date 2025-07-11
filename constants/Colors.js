@@ -1,10 +1,12 @@
 export default {
-  primary: '#1E90FF',
-  background: '#121212',
-  text: '#FFFFFF',
-  lightText: '#CCCCCC',
-  lightGray: '#2C2C2C',
-  border: '#333333',
-  senderBubble: '#1A3D2F',
-  receiverBubble: '#2E2E2E',
+  primary: '#0566FD',        
+  background: '#FFFFFF',     
+  text: '#222B45',         
+  lightText: '#7A7A7A',      
+  lightGray: '#F2F7FB',      
+  border: '#ECECEC',         
+  senderBubble: '#0566FD',   
+  receiverBubble: '#F2F7FB', 
+  icon: '#222B45',          
+  inputBackground: '#F8F8F8' 
 };
